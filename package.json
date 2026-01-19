@@ -4,7 +4,11 @@
   "description": "MightyBits Open Data Designer",
   "main": "main.js",
   "scripts": {
-    "start": "electron main.js"
+    "start": "electron main.js",
+    "buildosx": "electron-packager . --platform=darwin --arch=x64 --overwrite --asar=true",
+    "buildwin": "export PATH=$PATH:/Users/xcorex/Library/PlayOnMac/wine/darwin-x86/1.9.5-staging/bin/; electron-packager . --platform=win32 --arch=ia32 --overwrite --asar=true",
+    "buildlinux": "electron-packager . cocoblock --platform=linux --arch=ia32 --asar=true --overwrite",
+    "buildall": "npm run-script buildosx ; npm run-script buildwin ;npm run-script buildlinux "    
   },
   "repository": {
     "type": "git",
@@ -23,8 +27,13 @@
   },
   "homepage": "https://github.com/BioDesignRealWorld/LaravelDatabaseDesigner",
   "devDependencies": {
-    "electron-prebuilt": "^1.0.1",
     "electron-prebuilt": "^1.1.0",
     "gulp": "^3.9.1"
+  },
+  "dependencies": {
+    "tar.gz": "^1.0.5",
+    "fs-extra": "^0.30.0",
+    "handlebars": "^4.0.0",
+    "lodash": "^3.1.0"    
   }
 }

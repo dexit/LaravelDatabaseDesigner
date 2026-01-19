@@ -1,6 +1,6 @@
 DesignerApp.module("NodeModule.Modal", function(Modal, DesignerApp, Backbone, Marionette, $, _) {
 
-    Modal.CreateNodeContainer = Modal.BaseModal.extend({
+    Modal.CreateTableContainer = Modal.BaseModal.extend({
         template: _.template($('#createnode-template').html()),
         events: {
             'click .addnode': 'okClicked'
@@ -15,11 +15,14 @@ DesignerApp.module("NodeModule.Modal", function(Modal, DesignerApp, Backbone, Ma
         },
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
+            this.$("#container-increment").prop("checked", true);
+            this.$("#container-timestamp").prop("checked", true);
+            
             return this.el;
         }
     });
 
-    Modal.EditNodeContainer = Modal.BaseModal.extend({
+    Modal.EditTableContainer = Modal.BaseModal.extend({
         template: _.template($('#createnode-template').html()),
         events: {
             'click .addnode': 'okClicked'

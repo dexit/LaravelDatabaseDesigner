@@ -1,30 +1,43 @@
-const electron = require('electron')
-// Module to control application life.
-const app = electron.app
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow
-
-// In main process.
-const {ipcMain} = require('electron');
-const {dialog}  = require('electron');
-
+const {app, BrowserWindow, globalShortcut, Menu, ipcMain, dialog} = require('electron');
 const fs = require('fs');
+const os = require('os');
+const generator = require('./asset/app/js/generator/generator.js');
 
-ipcMain.on('open-schema-file', (event, arg) => {
-   
-   dialog.showOpenDialog({properties: ['openFile']}, function(fileName){
-      if (fileName === undefined)
-      {
-        event.returnValue = "";
-      }else{
-        fs.readFile(fileName[0], 'utf-8', function (err, data) {
-            var jsonfile = (JSON.parse(data));
-            event.returnValue = jsonfile;
-        });  
-      } 
-   });
 
-});
+var sendIPCresp = function(event, count, data)
+{
+  event.sender.send('done-ipc'+count, data)
+}
+
+var processIPCMsg = function(event, count, data) {  
+
+  var command = data['command'];
+  var params = data['params'];
+  var response = {};
+
+  switch (command) {
+    case 'settitle':
+      mainWindow.setTitle(params)
+      break;      
+    case 'generate':
+      generator.generateFromSkemaFileTo(params.skema_path, params.destination_dir);
+      response['generate'] = 'done';
+      sendIPCresp(event, count, response);
+      break;
+    case 'generate:json':
+      generator.generateFromSkemaJsonTo(params.skema, params.destination_dir);
+      response['generate'] = 'done';
+      sendIPCresp(event, count, response);
+      break;      
+    default:
+      break;
+  }
+
+}
+
+ipcMain.on('do-ipc', (event, arg) => {
+  processIPCMsg(event, arg.count, arg.command);   
+})
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -36,6 +49,7 @@ function createWindow () {
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`)
+  // mainWindow.openDevTools();
 
   // Open the DevTools.
   //  mainWindow.webContents.openDevTools()
@@ -69,6 +83,8 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow()
   }
+
+
 })
 
 // In this file you can include the rest of your app's specific main process

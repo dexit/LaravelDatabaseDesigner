@@ -2,11 +2,11 @@ DesignerApp.module("NodeModule.Views", function(Views, DesignerApp, Backbone, Ma
     // Private
     // -------------------------
 
-    Views.CreateConnection = function(srcNodeContainer, dstRelationModel) {
+    Views.CreateConnection = function(srcTableContainer, dstRelationModel) {
         //todo refactor this
         var conn = jsPlumb.connect({
-            source: srcNodeContainer.cid,
-            target: DesignerApp.NodeEntities.getNodeContainerFromClassName(dstRelationModel.get("relatedmodel")).cid,
+            source: srcTableContainer.cid,
+            target: DesignerApp.NodeEntities.getTableContainerFromClassName(dstRelationModel.get("relatedmodel")).cid,
             parameters: {
                 relation: dstRelationModel
             },
@@ -16,7 +16,7 @@ DesignerApp.module("NodeModule.Views", function(Views, DesignerApp, Backbone, Ma
                 }],
                 ["Label", {
                     cssClass: "label",
-                    label: srcNodeContainer.get('classname') + ' - ' + dstRelationModel.get('relationtype') + ' ' + dstRelationModel.get('relatedmodel'),
+                    label: "",
                     location: 0.3,
                     id: "label"
                 }]
@@ -24,7 +24,7 @@ DesignerApp.module("NodeModule.Views", function(Views, DesignerApp, Backbone, Ma
         });
         //todo refactor this
         conn.bind("click", function() {
-            DesignerApp.execute("nodecanvas:edit:relation", srcNodeContainer, dstRelationModel);
+            DesignerApp.execute("nodecanvas:edit:relation", srcTableContainer, dstRelationModel);
         });
 
         return conn;
@@ -36,6 +36,21 @@ DesignerApp.module("NodeModule.Views", function(Views, DesignerApp, Backbone, Ma
         tagName: "li",
         className: 'node-column',
         template: "#nodeitem-template",
+        triggers: {
+            'click .edit': 'nodeitem:edit',
+            'click .delete': 'nodeitem:delete'
+        },
+        modelEvents: {
+            "change": "render"
+        },
+        initialize: function() {}
+    });
+
+
+    Views.NodeItemPivot = Backbone.Marionette.ItemView.extend({
+        tagName: "li",
+        className: 'node-column',
+        template: "#nodeitem-pivot-template",
         triggers: {
             'click .edit': 'nodeitem:edit',
             'click .delete': 'nodeitem:delete'
@@ -65,7 +80,7 @@ DesignerApp.module("NodeModule.Views", function(Views, DesignerApp, Backbone, Ma
 
     */
     //ColumnCollectionView + NodeView
-    Views.NodeContainer = Backbone.Marionette.CompositeView.extend({
+    Views.TableContainer = Backbone.Marionette.CompositeView.extend({
         template: "#nodecontainer-template",
         className: "node-view item",
         childView: Views.NodeItem,
@@ -84,7 +99,7 @@ DesignerApp.module("NodeModule.Views", function(Views, DesignerApp, Backbone, Ma
         },
         modelChanged: function(m) {
             this.$el.removeClass("node-" + m._previousAttributes.color);            
-            this.$el.addClass("node-" + this.model.get("color"));            
+            this.$el.addClass("node-" + this.model.get("color"));      
             this.render();
         },
         triggers: {
@@ -99,7 +114,14 @@ DesignerApp.module("NodeModule.Views", function(Views, DesignerApp, Backbone, Ma
         initialize: function() {
             this.collection = this.model.get("column");
             this.$el.attr("id", this.model.cid);
-            this.$el.addClass("node-" + this.model.get("color"));            
+            this.$el.addClass("node-" + this.model.get("color"));  
+
+            if(this.model.get("pivot") === true) {
+                this.$el.addClass("node-pivot"); 
+                this.template = "#nodecontainer-pivot-template";
+                this.childView = Views.NodeItemPivot;
+            }
+
            // console.log("wew");
         },
         onAddChild: function(child) {
