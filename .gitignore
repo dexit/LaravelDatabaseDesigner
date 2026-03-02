@@ -2,3 +2,4 @@ bower_components
 config.codekit
 _pgbackup
 asset/js/min/helper-min.js
+node_modules

@@ -1,10 +1,39 @@
 {
-  "name": "nwbuild",
-  "version": "0.0.4",
-  "description": "Builds and packages node-webkit applications for linux, windows and osx.",
-    "main": "index.html",
-      "window": {
-    "title": "node-webkit demo",
-    "icon": "link.png",
-    "toolbar": false}
+  "name": "MightyBits",
+  "version": "0.0.1",
+  "description": "MightyBits Open Data Designer",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js",
+    "buildosx": "electron-packager . --platform=darwin --arch=x64 --overwrite --asar=true",
+    "buildwin": "export PATH=$PATH:/Users/xcorex/Library/PlayOnMac/wine/darwin-x86/1.9.5-staging/bin/; electron-packager . --platform=win32 --arch=ia32 --overwrite --asar=true",
+    "buildlinux": "electron-packager . cocoblock --platform=linux --arch=ia32 --asar=true --overwrite",
+    "buildall": "npm run-script buildosx ; npm run-script buildwin ;npm run-script buildlinux "    
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BioDesignRealWorld/LaravelDatabaseDesigner.git"
+  },
+  "keywords": [
+    "Laravel",
+    "MightyBits",
+    "Lifepatch",
+    "Badgeek"
+  ],
+  "author": "Budi Prakosa",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/BioDesignRealWorld/LaravelDatabaseDesigner"
+  },
+  "homepage": "https://github.com/BioDesignRealWorld/LaravelDatabaseDesigner",
+  "devDependencies": {
+    "electron-prebuilt": "^1.1.0",
+    "gulp": "^3.9.1"
+  },
+  "dependencies": {
+    "tar.gz": "^1.0.5",
+    "fs-extra": "^0.30.0",
+    "handlebars": "^4.0.0",
+    "lodash": "^3.1.0"    
+  }
 }
